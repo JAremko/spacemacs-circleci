@@ -6,7 +6,7 @@ RUN apk --no-cache add \
     bash \
     ca-certificates \
     curl \
-    emacs \
+    emacs-nox \
     git \
     gzip \
     openssh \
