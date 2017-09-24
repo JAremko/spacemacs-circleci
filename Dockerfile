@@ -9,6 +9,7 @@ RUN apk --no-cache add \
     emacs-nox \
     git \
     gzip \
+    jq \
     openssh \
     tar \
     && rm -rf /var/cache/* /tmp/* /var/log/* ~/.cache
