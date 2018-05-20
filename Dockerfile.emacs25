@@ -9,7 +9,7 @@
 ##
 ### License: GPLv3
 
-FROM ubuntu:zesty
+FROM ubuntu
 
 MAINTAINER JAremko <w3techplaygound@gmail.com>
 

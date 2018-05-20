@@ -1,21 +1,20 @@
-FROM alpine
+FROM jare/spacedoc
 
 MAINTAINER JAremko <w3techplaygound@gmail.com>
 
-RUN apk --no-cache add \
+COPY cleanup /usr/local/sbin/
+
+# basic stuff
+RUN echo 'APT::Get::Assume-Yes "true";' >> /etc/apt/apt.conf \
+    && apt-get update && apt-get install \
     bash \
     ca-certificates \
     curl \
-    emacs-nox \
+    git \
     git \
     gzip \
     jq \
-    openssh \
+    make \
+    openssl \
     tar \
-    && rm -rf /var/cache/* /tmp/* /var/log/* ~/.cache
-
-ENV HOME=/root/
-
-VOLUME /root/project
-
-ENTRYPOINT ["bin/bash", "-c"]
+    && cleanup
