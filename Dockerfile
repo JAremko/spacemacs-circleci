@@ -1,4 +1,15 @@
-FROM jare/spacedoc
+### Dockerfile --- Dockerfile for CircleCI with Emacs25.x
+##
+## Copyright (c) 2012-2018 Sylvain Benner & Contributors
+##
+## Author: Eugene "JAremko" Yaremenko <w3techplayground@gmail.com>
+##
+##
+## This file is not part of GNU Emacs.
+##
+### License: GPLv3
+
+FROM jare/spacedoc:noemacs
 
 MAINTAINER JAremko <w3techplaygound@gmail.com>
 
@@ -17,4 +28,9 @@ RUN echo 'APT::Get::Assume-Yes "true";' >> /etc/apt/apt.conf \
     make \
     openssl \
     tar \
+    && cleanup
+
+# Emacs
+RUN apt-get update && apt-get install emacs25-nox \
+# Cleanup
     && cleanup

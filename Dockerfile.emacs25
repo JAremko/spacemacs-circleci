@@ -1,6 +1,6 @@
 ### Dockerfile --- Dockerfile for CircleCI with Emacs25.x
 ##
-## Copyright (c) 2012-2017 Sylvain Benner & Contributors
+## Copyright (c) 2012-2018 Sylvain Benner & Contributors
 ##
 ## Author: Eugene "JAremko" Yaremenko <w3techplayground@gmail.com>
 ##
@@ -9,7 +9,7 @@
 ##
 ### License: GPLv3
 
-FROM ubuntu
+FROM jare/spacedoc:noemacs
 
 MAINTAINER JAremko <w3techplaygound@gmail.com>
 
@@ -32,4 +32,5 @@ RUN echo 'APT::Get::Assume-Yes "true";' >> /etc/apt/apt.conf \
 
 # Emacs
 RUN apt-get update && apt-get install emacs25-nox \
+# Cleanup
     && cleanup
