@@ -9,7 +9,7 @@
 ##
 ### License: GPLv3
 
-FROM jare/spacedoc:noemacs
+FROM jare/spacetools:noemacs
 
 MAINTAINER JAremko <w3techplaygound@gmail.com>
 
