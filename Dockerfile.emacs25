@@ -22,7 +22,6 @@ RUN echo 'APT::Get::Assume-Yes "true";' >> /etc/apt/apt.conf \
     ca-certificates \
     curl \
     git \
-    git \
     gzip \
     jq \
     make \
