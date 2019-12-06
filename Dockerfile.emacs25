@@ -32,6 +32,9 @@ RUN echo 'APT::Get::Assume-Yes "true";' >> /etc/apt/apt.conf \
     && cleanup
 
 # Emacs
-RUN apt-get update && apt-get install emacs25-nox \
+RUN apt-get update && apt-get install software-properties-common \
+    && apt-add-repository ppa:kelleyk/emacs \
+    && apt-get update && apt-get install emacs25 \
 # Cleanup
+    && apt-get purge software-properties-common \
     && cleanup
