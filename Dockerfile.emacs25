@@ -41,4 +41,5 @@ RUN apt-get update && apt-get install software-properties-common \
 
 # https://elpa.gnu.org/packages/gnu-elpa-keyring-update.html
 RUN mkdir -p /root/.emacs.d/elpa/gnupg \
+    && echo "disable-ipv6" >> /root/.gnupg/dirmngr.conf \
     && gpg --homedir /root/.emacs.d/elpa/gnupg --receive-keys 066DAFCB81E42C40
