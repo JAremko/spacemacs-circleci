@@ -28,6 +28,7 @@ RUN echo 'APT::Get::Assume-Yes "true";' >> /etc/apt/apt.conf \
     jq \
     make \
     openssl \
+    rsync \
     tar \
     && cleanup
 
