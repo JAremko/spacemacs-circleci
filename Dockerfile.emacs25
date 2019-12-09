@@ -42,4 +42,6 @@ RUN apt-get update && apt-get install software-properties-common \
 # https://elpa.gnu.org/packages/gnu-elpa-keyring-update.html
 RUN mkdir -p /root/.emacs.d/elpa/gnupg/ /root/.gnupg/ \
     && echo "disable-ipv6" >> /root/.gnupg/dirmngr.conf \
-    && gpg --homedir /root/.emacs.d/elpa/gnupg --keyserver keyserver.ubuntu.com --recv-keys 066DAFCB81E42C40
+    && gpg --homedir /root/.emacs.d/elpa/gnupg --keyserver keyserver.ubuntu.com --recv-keys 066DAFCB81E42C40 \
+# Gonna reapply it on top of the clone in CI
+    && mv /root/.emacs.d /root/.emacs.d_overrides
