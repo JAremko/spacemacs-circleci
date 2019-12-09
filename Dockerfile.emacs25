@@ -38,3 +38,6 @@ RUN apt-get update && apt-get install software-properties-common \
 # Cleanup
     && apt-get purge software-properties-common \
     && cleanup
+
+# https://elpa.gnu.org/packages/gnu-elpa-keyring-update.html
+RUN gpg --homedir /root/.emacs.d/elpa/gnupg --receive-keys 066DAFCB81E42C40
