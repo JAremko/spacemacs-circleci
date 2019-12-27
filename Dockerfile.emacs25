@@ -39,5 +39,3 @@ RUN apt-get update && apt-get install software-properties-common \
 # Cleanup
     && apt-get purge software-properties-common \
     && cleanup
-
-COPY package-keyring.gpg /usr/share/emacs/25.3/etc/package-keyring.gpg
