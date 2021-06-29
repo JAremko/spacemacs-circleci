@@ -1,6 +1,6 @@
-### Dockerfile --- Dockerfile for CircleCI with Emacs snapshot
+### Dockerfile --- Dockerfile for Spacemacs' CircleCI jobs
 ##
-## Copyright (c) 2012-2018 Sylvain Benner & Contributors
+## Copyright (c) 2012-2021 Sylvain Benner & Contributors
 ##
 ## Author: Eugene "JAremko" Yaremenko <w3techplayground@gmail.com>
 ##
@@ -11,7 +11,7 @@
 
 FROM jare/spacetools:noemacs
 
-MAINTAINER JAremko <w3techplaygound@gmail.com>
+ENV DEBIAN_FRONTEND=noninteractive
 
 COPY cleanup /usr/local/sbin/
 
@@ -25,6 +25,7 @@ RUN echo 'APT::Get::Assume-Yes "true";' >> /etc/apt/apt.conf \
     gnutls-bin \
     gnupg \
     gzip \
+    hub \
     jq \
     make \
     openssl \
@@ -32,10 +33,5 @@ RUN echo 'APT::Get::Assume-Yes "true";' >> /etc/apt/apt.conf \
     tar \
     && cleanup
 
-# Emacs
-RUN apt-get update && apt-get install software-properties-common \
-    && apt-add-repository ppa:kelleyk/emacs \
-    && apt-get update && apt-get install emacs26 \
-# Cleanup
-    && apt-get purge software-properties-common \
+RUN apt-get update && apt-get install emacs-nox \
     && cleanup
