@@ -11,7 +11,8 @@
 
 FROM jare/spacetools:noemacs
 
-ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND=noninteractive \
+    HOME=/root/
 
 COPY cleanup /usr/local/sbin/
 
