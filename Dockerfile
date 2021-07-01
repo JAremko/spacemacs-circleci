@@ -36,3 +36,7 @@ RUN echo 'APT::Get::Assume-Yes "true";' >> /etc/apt/apt.conf \
 
 RUN apt-get update && apt-get install emacs-nox \
     && cleanup
+
+RUN mkdir -p ~/.emacs.d
+
+WORKDIR ~/.emacs.d
