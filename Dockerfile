@@ -12,7 +12,7 @@
 FROM jare/spacetools:noemacs
 
 ENV DEBIAN_FRONTEND=noninteractive \
-    HOME=/root/ \
+    HOME=/root \
     ENV PATH="/opt/spacetools/:${PATH}"
 
 COPY cleanup /usr/local/sbin/
