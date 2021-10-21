@@ -35,7 +35,10 @@ RUN echo 'APT::Get::Assume-Yes "true";' >> /etc/apt/apt.conf \
     tar \
     && cleanup
 
-RUN apt-get update && apt-get install emacs-nox \
+RUN apt-get update && apt-get install software-properties-common \
+    && add-apt-repository ppa:kelleyk/emacs \
+    && apt-get update && apt-get install emacs27 \
+    && apt-get remove software-properties-common \
     && cleanup
 
 RUN mkdir -p "${HOME}/.emacs.d"
