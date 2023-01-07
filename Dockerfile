@@ -37,7 +37,7 @@ RUN echo 'APT::Get::Assume-Yes "true";' >> /etc/apt/apt.conf \
 
 RUN apt-get update && apt-get install software-properties-common \
     && add-apt-repository ppa:kelleyk/emacs \
-    && apt-get update && apt-get install emacs27 \
+    && apt-get update && apt-get install emacs28 \
     && apt-get remove software-properties-common \
     && cleanup
 
