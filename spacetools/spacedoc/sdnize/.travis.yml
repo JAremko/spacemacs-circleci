@@ -1,0 +1,21 @@
+dist: trusty
+
+language: generic
+sudo: false
+
+before_install:
+  - curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh
+  - source ./x.sh
+  - evm install emacs-26.3-travis --use --skip
+
+install:
+  - cask install
+
+script:
+  # Testing EmacsLisp files
+  - cask exec buttercup -L . -L tests
+
+# Upload coverage reports to codecov.io
+after_success:
+  - curl -fsSL https://codecov.io/bash -o codecov.bash
+  - bash ./codecov.bash

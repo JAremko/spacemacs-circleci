@@ -1,23 +1,13 @@
-### Dockerfile --- Dockerfile for Spacemacs' CircleCI jobs
-##
-## Copyright (c) 2012-2021 Sylvain Benner & Contributors
-##
-## Author: Eugene "JAremko" Yaremenko <w3techplayground@gmail.com>
-##
-##
-## This file is not part of GNU Emacs.
-##
-### License: GPLv3
-
-FROM jare/spacetools:noemacs
+FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND=noninteractive \
     HOME=/root \
     PATH="/opt/spacetools/:${PATH}"
 
 COPY cleanup /usr/local/sbin/
+COPY spacetools /opt/spacetools/
 
-# basic stuff
+# Install required packages
 RUN echo 'APT::Get::Assume-Yes "true";' >> /etc/apt/apt.conf \
     && apt-get update && apt-get install \
     bash \
@@ -36,7 +26,14 @@ RUN echo 'APT::Get::Assume-Yes "true";' >> /etc/apt/apt.conf \
     emacs \
     && cleanup
 
+# Set correct permissions
+RUN chmod 777 /opt/spacetools/spacedoc/sdnize \
+    && chmod 775 /opt/spacetools/run
 
+# Create .emacs.d directory
 RUN mkdir -p "${HOME}/.emacs.d"
 
 WORKDIR "${HOME}/.emacs.d"
+
+ENTRYPOINT ["/opt/spacetools/run"]
+CMD ["--help"]

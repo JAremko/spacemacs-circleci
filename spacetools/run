@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "$0")"
+
+action="$1"
+shift
+first_arg="$1"
+shift
+
+print_help () {
+    read -d '' help <<- EOF
+  Spacemacs tools
+
+  usage: run ACTION [ARGS]...
+
+  Actions:
+    validoc ROOT [INPUTS]... Validate Spacemacs documentation files.
+                             If only the first argument is supplied
+                             the default list of documentation files
+                             will be used.
+    docfmt  ROOT [INPUTS]... Format Spacemacs documentation files.
+                             If only the first argument is supplied
+                             the default list of documentation files
+                             will be used.
+
+  Common arguments:
+    ROOT   root directory of Spacemacs documentation. Example: "~/.emacs.d/".
+    INPUTS are processed .org files or directories containing them.
+EOF
+    echo "$help"
+}
+
+echo_headline () {
+    printf '=%.0s' {1..70}
+    printf "\n$1\n"
+    printf '=%.0s' {1..70}
+    echo
+}
+
+case $action in
+    "")
+        print_help
+        exit 2
+        ;;
+    -h|--help)
+        print_help
+        exit 0
+        ;;
+esac
+
+case $@ in
+    -h|--help)
+        print_help
+        exit 0
+        ;;
+esac
+
+tmp_dir="/tmp/spacetools/"
+rm -rf "${tmp_dir}"
+sdnize_args=("${first_arg}" "${tmp_dir}" "${@}")
+
+case $action in
+    validoc)
+        set -e
+        cd ./spacedoc
+        echo_headline "Exporting documentation for validation:"
+        emacs -batch \
+              -l /opt/spacetools/spacedoc/sdnize/sdnize  \
+              -no-site-file \
+              -q \
+              "${sdnize_args[@]}"
+        echo_headline "Validating documentation:"
+        spacedoc validate -c"/opt/spacetools/spacedoc-cfg.edn" "${tmp_dir}"
+        exit $?
+        ;;
+    docfmt)
+        set -e
+        cd ./spacedoc
+        echo_headline "Exporting documentation for formatting with SDN tools:"
+        emacs -batch \
+              -l /opt/spacetools/spacedoc/sdnize/sdnize \
+              -no-site-file \
+              -q \
+              "${sdnize_args[@]}"
+        echo_headline "Generating \"LAYERS.sdn\" file:"
+        spacedoc layers -c"/opt/spacetools/spacedoc-cfg.edn" \
+                 "${tmp_dir}layers"
+        echo_headline "Importing documentation back into .org format:"
+        spacedoc orgify -c"/opt/spacetools/spacedoc-cfg.edn" \
+                 "${tmp_dir}" "${first_arg}"
+        exit $?
+        ;;
+    *)
+        print_help
+        exit 2
+        ;;
+esac
