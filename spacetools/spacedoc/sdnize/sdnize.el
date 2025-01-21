@@ -145,7 +145,6 @@ to the return value."
             (car buckets)
             (cons (+ (caar buckets) (car fps))
                   (push (cdr fps) (cdar buckets)))))
-    (message "[DEBUG] Created %d buckets" n)
     (mapcar 'cdr buckets)))
 
 (defun sdnize/do-concurrently
@@ -165,7 +164,6 @@ SENTINEL is a worker process sentinel."
            files
            (min w-count
                 (length files))))
-    (message "[DEBUG] Starting %d workers" w-count)
     (dolist (file-path-bucket file-buckets)
       (make-process
        :name
@@ -197,30 +195,22 @@ ROOT-DIR is the documentation root directory. Empty FILE-PATH ignored."
 
 (defun sdnize/sentinel (p e)
   "Sentinel for worker process."
-  (message "[DEBUG] Sentinel called for process %S with event %S" p e)
   (condition-case err
       (let ((buff (process-buffer p)))
         (if (not (eq (process-status p) 'exit))
-            (progn
-              (setq sdnize-stop-waiting t)
-              (error "Process %s doesn't have status: exit" p))
+            (error "Process %s doesn't have status: exit" p)
           (sdnize/interpret-proc-output p buff)
           (kill-buffer buff))
         (if (string-match-p "finished" e)
             (progn
               (message "Process %s has finished.\n" p)
-              (cl-incf sdnize-workers-fin)
-              (message "[DEBUG] Workers finished: %d/%d"
-                      sdnize-workers-fin sdnize-worker-count)
-              (when (= sdnize-workers-fin sdnize-worker-count)
-                (message "[DEBUG] All workers finished, setting stop-waiting")
+              (when (= (cl-incf sdnize-workers-fin)
+                       sdnize-worker-count)
                 (setq sdnize-stop-waiting t)))
-          (progn
-            (message "[DEBUG] Process failed: %s was %s" p e)
-            (setq sdnize-stop-waiting t) ; Set this BEFORE throwing error
-            (error "Process %s was %s" p e))))
-    (error (message "[DEBUG] Error in sentinel: %S" err)
-           (setq sdnize-stop-waiting t)
+          (error "Process %s was %s"
+                 p e)
+          (setq sdnize-stop-waiting t)))
+    (error (setq sdnize-stop-waiting t)
            (error "%s" err))))
 
 (defun sdnize/worker-msg-handler (resp)
@@ -297,7 +287,6 @@ See `sdnize-help-text' for description."
          (ops (car ops-and-arg))
          (unknown-ops (cl-set-difference ops sdnize-known-ops :test #'string=))
          (inputs (cadr ops-and-arg)))
-    (message "[DEBUG] Starting sdnize/run with args: %S" arg-list)
     (unless (null unknown-ops)
       (error "Unknown option: %s" unknown-ops))
     (setq sdnize-copy-assets (member "+copy-assets" ops))
@@ -321,15 +310,12 @@ See `sdnize-help-text' for description."
            (w-count
             ;; FIXME: With 1-2  workers it gets extremely slow.
             (min (max 4 (sdnize/get-cpu-count)) f-length)))
-      (message "[DEBUG] Found %d files to process" f-length)
       (if (= f-length 0)
-        (progn (message "No files to export.")
+          (progn (message "No files to export.")
                  (kill-emacs 0))
         (unless (or (file-exists-p w-path)
                     (byte-compile-file "sdnize_worker.el"))
           (error "Failed to byte compile worker script."))
-        (message "[DEBUG] Setting up worker environment: count=%d root=%s target=%s"
-                w-count root-dir target-dir)
         (setq sdnize-worker-count w-count
               sdnize-root-dir root-dir
               sdnize-target-dir target-dir)
@@ -340,21 +326,14 @@ See `sdnize-help-text' for description."
          'sdnize/sentinel
          (lambda (f)
            (format "%S" `(sdnize/to-sdn ,root-dir ,sdnize-target-dir ',f))))
-        (message "[DEBUG] Entering wait loop")
         (while (not sdnize-stop-waiting)
-          (message "[DEBUG] Still waiting... workers_fin=%d/%d stop_waiting=%S"
-                   sdnize-workers-fin sdnize-worker-count sdnize-stop-waiting)
-          (accept-process-output nil 1))
-        (message "[DEBUG] Wait loop finished")
-        (message "Done.")
-        (message "[DEBUG] Calling kill-emacs")
-        (kill-emacs 0)))))
+          (accept-process-output))
+        (message "Done.")))))
 
 ;; Script entry point.
 (when (and load-file-name
            noninteractive
            (not (bound-and-true-p sdnize-testing)))
-  (message "[DEBUG] Starting script with argv: %S" argv)
   (sdnize/run argv))
 
 (provide 'sdnize)
